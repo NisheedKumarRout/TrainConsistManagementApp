@@ -1,7 +1,9 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
@@ -69,22 +71,35 @@ public class TrainConsistManagementApp {
         System.out.println(trainConsist);
 
 
-        // =========================
         // UC5: LinkedHashSet (Order + Uniqueness)
-        // =========================
-
         LinkedHashSet<String> formation = new LinkedHashSet<>();
 
-        // Add bogies
         formation.add("Engine");
         formation.add("Sleeper");
         formation.add("Cargo");
         formation.add("Guard");
-
-        // Add duplicate intentionally
-        formation.add("Sleeper");
+        formation.add("Sleeper"); // duplicate
 
         System.out.println("\nTrain Formation (LinkedHashSet):");
         System.out.println(formation);
+
+
+        // =========================
+        // UC6: Bogie → Capacity (HashMap)
+        // =========================
+
+        HashMap<String, Integer> bogieCapacity = new HashMap<>();
+
+        // Add bogie capacities
+        bogieCapacity.put("Sleeper", 72);
+        bogieCapacity.put("AC Chair", 60);
+        bogieCapacity.put("First Class", 24);
+
+        System.out.println("\nBogie Capacity Details:");
+
+        // Iterate using entrySet
+        for (Map.Entry<String, Integer> entry : bogieCapacity.entrySet()) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
     }
 }
