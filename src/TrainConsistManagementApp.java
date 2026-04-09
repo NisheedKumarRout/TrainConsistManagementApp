@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.regex.*;
 
 public class TrainConsistManagementApp {
 
@@ -32,39 +33,71 @@ public class TrainConsistManagementApp {
                 .collect(Collectors.groupingBy(b -> b.type));
     }
 
-    // UC10: Calculate total capacity
+    // UC10: Total capacity
     public static int calculateTotalCapacity(List<Bogie> bogies) {
         return bogies.stream()
                 .map(b -> b.capacity)
                 .reduce(0, Integer::sum);
     }
 
+    // 🔥 UC11: Validate Train ID
+    public static boolean isValidTrainID(String trainID) {
+        String regex = "TRN-\\d{4}";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(trainID);
+        return matcher.matches();
+    }
+
+    // 🔥 UC11: Validate Cargo Code
+    public static boolean isValidCargoCode(String cargoCode) {
+        String regex = "PET-[A-Z]{2}";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(cargoCode);
+        return matcher.matches();
+    }
+
     public static void main(String[] args) {
 
+        Scanner sc = new Scanner(System.in);
+
+        // Sample bogies
         List<Bogie> bogies = new ArrayList<>();
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("Sleeper", 70));
         bogies.add(new Bogie("AC Chair", 60));
         bogies.add(new Bogie("First Class", 40));
 
-        System.out.println("All Bogies:");
-        bogies.forEach(System.out::println);
-
         // UC8
         System.out.println("\nFiltered Bogies (capacity > 60):");
-        List<Bogie> filtered = filterHighCapacityBogies(bogies, 60);
-        filtered.forEach(System.out::println);
+        filterHighCapacityBogies(bogies, 60).forEach(System.out::println);
 
         // UC9
         System.out.println("\nGrouped Bogies:");
-        Map<String, List<Bogie>> grouped = groupBogiesByType(bogies);
-        grouped.forEach((type, list) -> {
-            System.out.println(type + ":");
-            list.forEach(System.out::println);
+        groupBogiesByType(bogies).forEach((k, v) -> {
+            System.out.println(k + ":");
+            v.forEach(System.out::println);
         });
 
         // UC10
-        int totalCapacity = calculateTotalCapacity(bogies);
-        System.out.println("\nTotal Seating Capacity: " + totalCapacity);
+        System.out.println("\nTotal Seating Capacity: " + calculateTotalCapacity(bogies));
+
+        // 🔥 UC11 Input Validation
+        System.out.print("\nEnter Train ID: ");
+        String trainID = sc.nextLine();
+
+        System.out.print("Enter Cargo Code: ");
+        String cargoCode = sc.nextLine();
+
+        if (isValidTrainID(trainID)) {
+            System.out.println("Valid Train ID");
+        } else {
+            System.out.println("Invalid Train ID");
+        }
+
+        if (isValidCargoCode(cargoCode)) {
+            System.out.println("Valid Cargo Code");
+        } else {
+            System.out.println("Invalid Cargo Code");
+        }
     }
 }
