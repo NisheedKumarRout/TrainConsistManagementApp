@@ -3,7 +3,6 @@ import java.util.stream.Collectors;
 
 public class TrainConsistManagementApp {
 
-    // Existing Bogie class (assumed from UC7)
     static class Bogie {
         String type;
         int capacity;
@@ -19,28 +18,30 @@ public class TrainConsistManagementApp {
         }
     }
 
-    // 🔥 UC8 METHOD
-    public static List<Bogie> filterHighCapacityBogies(List<Bogie> bogies, int threshold) {
+    // 🔥 UC9 METHOD
+    public static Map<String, List<Bogie>> groupBogiesByType(List<Bogie> bogies) {
         return bogies.stream()
-                .filter(b -> b.capacity > threshold)
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(b -> b.type));
     }
 
     public static void main(String[] args) {
 
-        // Sample data (reuse UC7 list ideally)
         List<Bogie> bogies = new ArrayList<>();
         bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("Sleeper", 70));
         bogies.add(new Bogie("AC Chair", 60));
         bogies.add(new Bogie("First Class", 40));
 
         System.out.println("All Bogies:");
         bogies.forEach(System.out::println);
 
-        // 🔥 Apply UC8 filtering
-        List<Bogie> filtered = filterHighCapacityBogies(bogies, 60);
+        // 🔥 UC9 grouping
+        Map<String, List<Bogie>> grouped = groupBogiesByType(bogies);
 
-        System.out.println("\nFiltered Bogies (capacity > 60):");
-        filtered.forEach(System.out::println);
+        System.out.println("\nGrouped Bogies:");
+        grouped.forEach((type, list) -> {
+            System.out.println(type + ":");
+            list.forEach(System.out::println);
+        });
     }
 }
