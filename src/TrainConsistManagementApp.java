@@ -1,88 +1,46 @@
 import java.util.*;
-
-class Bogie {
-    String name;
-    int capacity;
-
-    // Constructor
-    Bogie(String name, int capacity) {
-        this.name = name;
-        this.capacity = capacity;
-    }
-
-    // toString() for printing
-    public String toString() {
-        return name + " -> " + capacity;
-    }
-}
+import java.util.stream.Collectors;
 
 public class TrainConsistManagementApp {
+
+    // Existing Bogie class (assumed from UC7)
+    static class Bogie {
+        String type;
+        int capacity;
+
+        Bogie(String type, int capacity) {
+            this.type = type;
+            this.capacity = capacity;
+        }
+
+        @Override
+        public String toString() {
+            return type + " - Capacity: " + capacity;
+        }
+    }
+
+    // 🔥 UC8 METHOD
+    public static List<Bogie> filterHighCapacityBogies(List<Bogie> bogies, int threshold) {
+        return bogies.stream()
+                .filter(b -> b.capacity > threshold)
+                .collect(Collectors.toList());
+    }
+
     public static void main(String[] args) {
 
-        // UC1
-        String trainName = "Chennai Express";
-        System.out.println("Train Name: " + trainName);
+        // Sample data (reuse UC7 list ideally)
+        List<Bogie> bogies = new ArrayList<>();
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 60));
+        bogies.add(new Bogie("First Class", 40));
 
-        // UC2: ArrayList
-        ArrayList<String> passengerBogies = new ArrayList<>();
-        passengerBogies.add("Sleeper");
-        passengerBogies.add("AC Chair");
-        passengerBogies.add("First Class");
+        System.out.println("All Bogies:");
+        bogies.forEach(System.out::println);
 
-        passengerBogies.remove("AC Chair");
-        boolean exists = passengerBogies.contains("Sleeper");
+        // 🔥 Apply UC8 filtering
+        List<Bogie> filtered = filterHighCapacityBogies(bogies, 60);
 
-        // UC3: HashSet
-        HashSet<String> bogieIds = new HashSet<>();
-        bogieIds.add("BG101");
-        bogieIds.add("BG102");
-        bogieIds.add("BG103");
-        bogieIds.add("BG101");
-
-        // UC4: LinkedList
-        LinkedList<String> trainConsist = new LinkedList<>();
-        trainConsist.add("Engine");
-        trainConsist.add("Sleeper");
-        trainConsist.add("AC");
-        trainConsist.add("Cargo");
-        trainConsist.add("Guard");
-        trainConsist.add(2, "Pantry");
-        trainConsist.removeFirst();
-        trainConsist.removeLast();
-
-        // UC5: LinkedHashSet
-        LinkedHashSet<String> formation = new LinkedHashSet<>();
-        formation.add("Engine");
-        formation.add("Sleeper");
-        formation.add("Cargo");
-        formation.add("Guard");
-        formation.add("Sleeper");
-
-        // UC6: HashMap
-        HashMap<String, Integer> bogieCapacity = new HashMap<>();
-        bogieCapacity.put("Sleeper", 72);
-        bogieCapacity.put("AC Chair", 60);
-        bogieCapacity.put("First Class", 24);
-
-
-        // =========================
-        // UC7: Sort Bogies using Comparator
-        // =========================
-
-        List<Bogie> bogieList = new ArrayList<>();
-
-        // Add bogie objects
-        bogieList.add(new Bogie("Sleeper", 72));
-        bogieList.add(new Bogie("AC Chair", 60));
-        bogieList.add(new Bogie("First Class", 24));
-
-        System.out.println("\nBefore Sorting:");
-        System.out.println(bogieList);
-
-        // Sort using Comparator (by capacity)
-        bogieList.sort(Comparator.comparingInt(b -> b.capacity));
-
-        System.out.println("\nAfter Sorting (by Capacity):");
-        System.out.println(bogieList);
+        System.out.println("\nFiltered Bogies (capacity > 60):");
+        filtered.forEach(System.out::println);
     }
 }
