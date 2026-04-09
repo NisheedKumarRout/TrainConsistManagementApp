@@ -29,34 +29,29 @@ public class TrainConsistManagementApp {
             this.type = type;
             this.cargo = cargo;
         }
-
-        @Override
-        public String toString() {
-            return type + " - Cargo: " + cargo;
-        }
     }
 
-    // UC8: Filter
+    // UC8
     public static List<Bogie> filterHighCapacityBogies(List<Bogie> bogies, int threshold) {
         return bogies.stream()
                 .filter(b -> b.capacity > threshold)
                 .collect(Collectors.toList());
     }
 
-    // UC9: Group
+    // UC9
     public static Map<String, List<Bogie>> groupBogiesByType(List<Bogie> bogies) {
         return bogies.stream()
                 .collect(Collectors.groupingBy(b -> b.type));
     }
 
-    // UC10: Reduce
+    // UC10
     public static int calculateTotalCapacity(List<Bogie> bogies) {
         return bogies.stream()
                 .map(b -> b.capacity)
                 .reduce(0, Integer::sum);
     }
 
-    // UC11: Regex Validation
+    // UC11
     public static boolean isValidTrainID(String trainID) {
         return Pattern.matches("TRN-\\d{4}", trainID);
     }
@@ -65,7 +60,7 @@ public class TrainConsistManagementApp {
         return Pattern.matches("PET-[A-Z]{2}", cargoCode);
     }
 
-    // 🔥 UC12: Safety Check
+    // UC12
     public static boolean isTrainSafe(List<GoodsBogie> goodsBogies) {
         return goodsBogies.stream()
                 .allMatch(b ->
@@ -74,49 +69,48 @@ public class TrainConsistManagementApp {
                 );
     }
 
+    // 🔥 UC13: Loop-based filtering
+    public static List<Bogie> filterUsingLoop(List<Bogie> bogies, int threshold) {
+        List<Bogie> result = new ArrayList<>();
+        for (Bogie b : bogies) {
+            if (b.capacity > threshold) {
+                result.add(b);
+            }
+        }
+        return result;
+    }
+
+    // 🔥 UC13: Stream-based filtering
+    public static List<Bogie> filterUsingStream(List<Bogie> bogies, int threshold) {
+        return bogies.stream()
+                .filter(b -> b.capacity > threshold)
+                .collect(Collectors.toList());
+    }
+
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-
-        // Passenger bogies
+        // Create dataset
         List<Bogie> bogies = new ArrayList<>();
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("Sleeper", 70));
-        bogies.add(new Bogie("AC Chair", 60));
-        bogies.add(new Bogie("First Class", 40));
+        for (int i = 0; i < 1000; i++) {
+            bogies.add(new Bogie("Sleeper", 50 + (i % 50)));
+        }
 
-        // UC8
-        System.out.println("\nFiltered Bogies (capacity > 60):");
-        filterHighCapacityBogies(bogies, 60).forEach(System.out::println);
+        int threshold = 60;
 
-        // UC9
-        System.out.println("\nGrouped Bogies:");
-        groupBogiesByType(bogies).forEach((k, v) -> {
-            System.out.println(k + ":");
-            v.forEach(System.out::println);
-        });
+        // 🔥 Loop Benchmark
+        long startLoop = System.nanoTime();
+        List<Bogie> loopResult = filterUsingLoop(bogies, threshold);
+        long endLoop = System.nanoTime();
 
-        // UC10
-        System.out.println("\nTotal Seating Capacity: " + calculateTotalCapacity(bogies));
+        // 🔥 Stream Benchmark
+        long startStream = System.nanoTime();
+        List<Bogie> streamResult = filterUsingStream(bogies, threshold);
+        long endStream = System.nanoTime();
 
-        // UC11
-        System.out.print("\nEnter Train ID: ");
-        String trainID = sc.nextLine();
+        System.out.println("Loop Result Size: " + loopResult.size());
+        System.out.println("Stream Result Size: " + streamResult.size());
 
-        System.out.print("Enter Cargo Code: ");
-        String cargoCode = sc.nextLine();
-
-        System.out.println(isValidTrainID(trainID) ? "Valid Train ID" : "Invalid Train ID");
-        System.out.println(isValidCargoCode(cargoCode) ? "Valid Cargo Code" : "Invalid Cargo Code");
-
-        // 🔥 UC12
-        List<GoodsBogie> goods = new ArrayList<>();
-        goods.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        goods.add(new GoodsBogie("Open", "Coal"));
-        goods.add(new GoodsBogie("Box", "Grain"));
-
-        boolean safe = isTrainSafe(goods);
-
-        System.out.println("\nTrain Safety Status: " + (safe ? "SAFE" : "UNSAFE"));
+        System.out.println("Loop Time (ns): " + (endLoop - startLoop));
+        System.out.println("Stream Time (ns): " + (endStream - startStream));
     }
 }
